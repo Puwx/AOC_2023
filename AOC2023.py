@@ -79,15 +79,55 @@ games above is formatted like this:
 """
 sum(prods)
 
-#Day 3 
-nonPt = [[i,len(x),ip[i].index(x)] for i in range(len(ip)) for x in re.findall(exp,ip[i])]
+#Day 3
 
+#Part 1
+nonPt = [[i,x.end()-x.start(),x.start()] for i in range(len(ip)) for x in re.finditer(exp,ip[i])]
+prod = list(product(range(-1,2),range(-1,2)))
+tot = []
+fullData = []
 for row,ln,col in nonPt:
-    print(ip[row][col:col+ln])
+    nearby = []
+    num = int(ip[row][col:col+ln])
     chkNums = [[row,col],[row,col+ln-1]]
     for r,c in chkNums:
-        print(r,c)
-        for i in range(-1,1):
-            for j in range(-1,1):
-                print(r+i,c+j,ip[r+i][c+j])
-    print("-"*100)
+        for i,j in prod:
+            ur,uc = r+i,c+j
+            if ur < 0 or uc > 139 or ur > 139:
+                continue
+            else:
+                char = ip[ur][uc]
+                if re.findall(specChar,char):
+                    nearby.append(True)
+    if nearby:
+        tot.append(num)
+print(sum(tot))
+
+# Part 2
+
+gear = re.compile("[\*]")
+nonPt = [[i,x.end()-x.start(),x.start()] for i in range(len(ip)) for x in re.finditer(gear,ip[i])]
+prod = list(product(range(-1,2),range(-1,2)))
+tot = 0
+mk = []
+for row,ln,col in nonPt:
+    nearby = []
+    chkNums = [[row,col]]
+    for r,c in chkNums:
+        for i,j in prod:
+            ur,uc = r+i,c+j
+            if ur < 0 or uc > 139 or ur > 139:
+                continue
+            else:
+                char = ip[ur][uc]
+                if re.findall(exp,char):
+                    nearby.append([ur,uc])
+    if len(nearby)==2:
+        fndNum = []
+        for numR,numC in nearby:
+            relNums = int([ip[numR][match.start():match.end()] for match in re.finditer(exp,ip[numR]) if (match.start()<=numC) and (match.end()>=numC)][0])
+            fndNum.append(relNums)
+        mk.append([*chkNums,fndNum])
+        tot += np.prod(fndNum)
+
+print(tot)
