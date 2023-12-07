@@ -78,3 +78,16 @@ games above is formatted like this:
    
 """
 sum(prods)
+
+#Day 3 
+nonPt = [[i,len(x),ip[i].index(x)] for i in range(len(ip)) for x in re.findall(exp,ip[i])]
+
+for row,ln,col in nonPt:
+    print(ip[row][col:col+ln])
+    chkNums = [[row,col],[row,col+ln-1]]
+    for r,c in chkNums:
+        print(r,c)
+        for i in range(-1,1):
+            for j in range(-1,1):
+                print(r+i,c+j,ip[r+i][c+j])
+    print("-"*100)
